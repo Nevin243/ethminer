@@ -287,9 +287,9 @@ void CLMiner::listDevices()
 	unsigned int i = 0;
 
 	vector<cl::Platform> platforms = getPlatforms();
-	if (platforms.empty())
+	if (platforms.empty()){
 		cwarn << "No Platforms founds. - MN";
-		return;
+		return;}
 	for (unsigned j = 0; j < platforms.size(); ++j)
 	{
 		i = 0;
