@@ -658,9 +658,6 @@ private:
 			f.start("cuda", false);
 		f.setWork(WorkPackage{genesis});
 
-		if (f != NULL)
-			cout << "Farm reached";
-
 		map<uint64_t, WorkingProgress> results;
 		uint64_t mean = 0;
 		uint64_t innerMean = 0;

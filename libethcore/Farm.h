@@ -84,6 +84,7 @@ public:
 	 */
 	bool start(std::string const& _sealer, bool mixed)
 	{
+		cout << "start farm";
 		Guard l(x_minerWork);
 		if (!m_miners.empty() && m_lastSealer == _sealer)
 			return true;
