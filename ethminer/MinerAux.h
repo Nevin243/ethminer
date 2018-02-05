@@ -779,6 +779,7 @@ private:
 		(void)_m;
 		(void)_remote;
 		(void)_recheckPeriod;
+		cwarn << "Reaching RPC STUFF";
 		jsonrpc::HttpClient client(m_farmURL);
 		:: FarmClient rpc(client);
 		jsonrpc::HttpClient failoverClient(m_farmFailOverURL);
