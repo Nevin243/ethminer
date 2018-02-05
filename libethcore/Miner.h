@@ -175,12 +175,12 @@ public:
 
 	void setWork(WorkPackage const& _work)
 	{
+		cout << "Work set - Miner.h";
 		{
 			Guard l(x_work);
 			m_work = _work;
 			workSwitchStart = std::chrono::high_resolution_clock::now();
 		}
-		cwarn << "Work set - Miner.h";
 		pause();
 		kickOff();
 		m_hashCount = 0;
