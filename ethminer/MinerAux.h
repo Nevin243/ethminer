@@ -626,6 +626,7 @@ public:
 
 private:
 
+	// BENCH MARKING _ USED FOR TESITNG - MN
 	void doBenchmark(MinerType _m, unsigned _warmupDuration = 15, unsigned _trialDuration = 3, unsigned _trials = 5)
 	{
 		BlockHeader genesis;
