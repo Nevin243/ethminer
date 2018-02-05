@@ -271,7 +271,6 @@ unsigned CLMiner::getNumDevices()
 	vector<cl::Platform> platforms = getPlatforms();
 	if (platforms.empty())
 		return 0;
-figuired
 	vector<cl::Device> devices = getDevices(platforms, s_platformId);
 	if (devices.empty())
 	{
