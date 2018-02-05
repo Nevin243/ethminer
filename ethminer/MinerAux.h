@@ -658,7 +658,7 @@ private:
 			f.start("cuda", false);
 		f.setWork(WorkPackage{genesis});
 
-		if (f != null)
+		if (f != NULL)
 			cout << "Farm reached";
 
 		map<uint64_t, WorkingProgress> results;
