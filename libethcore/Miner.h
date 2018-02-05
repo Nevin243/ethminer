@@ -178,6 +178,7 @@ public:
 		{
 			Guard l(x_work);
 			m_work = _work;
+			cwarn << "Work set - Miner.h";
 			workSwitchStart = std::chrono::high_resolution_clock::now();
 		}
 		pause();

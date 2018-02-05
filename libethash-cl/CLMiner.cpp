@@ -12,76 +12,75 @@ using namespace eth;
 
 namespace dev
 {
-namespace eth
-{
-
-unsigned CLMiner::s_workgroupSize = CLMiner::c_defaultLocalWorkSize;
-unsigned CLMiner::s_initialGlobalWorkSize = CLMiner::c_defaultGlobalWorkSizeMultiplier * CLMiner::c_defaultLocalWorkSize;
-unsigned CLMiner::s_threadsPerHash = 8;
-
-constexpr size_t c_maxSearchResults = 1;
-
-struct CLChannel: public LogChannel
-{
-	static const char* name() { return EthOrange " cl"; }
-	static const int verbosity = 2;
-	static const bool debug = false;
-};
-#define cllog clog(CLChannel)
-#define ETHCL_LOG(_contents) cllog << _contents
-
-namespace
-{
-
-void addDefinition(string& _source, char const* _id, unsigned _value)
-{
-	char buf[256];
-	sprintf(buf, "#define %s %uu\n", _id, _value);
-	_source.insert(_source.begin(), buf, buf + strlen(buf));
-}
-
-std::vector<cl::Platform> getPlatforms()
-{
-	vector<cl::Platform> platforms;
-	try
+	namespace eth
 	{
-		cl::Platform::get(&platforms);
-	}
-	catch(cl::Error const& err)
-	{
-#if defined(CL_PLATFORM_NOT_FOUND_KHR)
-		if (err.err() == CL_PLATFORM_NOT_FOUND_KHR)
-			cwarn << "No OpenCL platforms found";
-		else
-#endif
-			throw err;
-	}
-	return platforms;
-}
 
-std::vector<cl::Device> getDevices(std::vector<cl::Platform> const& _platforms, unsigned _platformId)
-{
-	vector<cl::Device> devices;
-	size_t platform_num = min<size_t>(_platformId, _platforms.size() - 1);
-	try
-	{
-		_platforms[platform_num].getDevices(
-			CL_DEVICE_TYPE_GPU | CL_DEVICE_TYPE_ACCELERATOR,
-			&devices
-		);
-	}
-	catch (cl::Error const& err)
-	{
-		// if simply no devices found return empty vector
-		if (err.err() != CL_DEVICE_NOT_FOUND)
-			throw err;
-	}
-	return devices;
-}
+		unsigned CLMiner::s_workgroupSize = CLMiner::c_defaultLocalWorkSize;
+		unsigned CLMiner::s_initialGlobalWorkSize = CLMiner::c_defaultGlobalWorkSizeMultiplier * CLMiner::c_defaultLocalWorkSize;
+		unsigned CLMiner::s_threadsPerHash = 8;
 
-}
+		constexpr size_t c_maxSearchResults = 1;
 
-}
+		struct CLChannel: public LogChannel
+		{
+			static const char* name() { return EthOrange " cl"; }
+			static const int verbosity = 2;
+			static const bool debug = false;
+		};
+
+		#define cllog clog(CLChannel)
+		#define ETHCL_LOG(_contents) cllog << _contents
+
+		namespace
+		{
+
+			void addDefinition(string& _source, char const* _id, unsigned _value)
+			{	
+				char buf[256];
+				sprintf(buf, "#define %s %uu\n", _id, _value);
+				_source.insert(_source.begin(), buf, buf + strlen(buf));
+			}
+
+			std::vector<cl::Platform> getPlatforms()
+			{
+				vector<cl::Platform> platforms;
+				try
+				{
+					cl::Platform::get(&platforms);
+				}
+				catch(cl::Error const& err)
+				{
+					#if defined(CL_PLATFORM_NOT_FOUND_KHR)
+						if (err.err() == CL_PLATFORM_NOT_FOUND_KHR)
+							cwarn << "No OpenCL platforms found";
+						else
+					#endif
+						throw err;
+				}
+				return platforms;
+			}
+
+			std::vector<cl::Device> getDevices(std::vector<cl::Platform> const& _platforms, unsigned _platformId)
+			{
+				vector<cl::Device> devices;
+				size_t platform_num = min<size_t>(_platformId, _platforms.size() - 1);
+				try
+				{
+					_platforms[platform_num].getDevices(CL_DEVICE_TYPE_GPU | CL_DEVICE_TYPE_ACCELERATOR, &devices);
+				}
+				catch (cl::Error const& err)
+				{
+			
+					// if simply no devices found return empty vector
+					if (err.err() != CL_DEVICE_NOT_FOUND)
+					throw err;
+				}
+				return devices;
+			}
+
+		}
+
+	}
 }
 
 unsigned CLMiner::s_platformId = 0;
@@ -113,12 +112,14 @@ void CLMiner::kickOff()
 
 namespace
 {
-uint64_t randomNonce()
-{
-	static std::mt19937_64 s_gen(std::random_device{}());
-	return std::uniform_int_distribution<uint64_t>{}(s_gen);
+	uint64_t randomNonce()
+	{
+		static std::mt19937_64 s_gen(std::random_device{}());
+		return std::uniform_int_distribution<uint64_t>{}(s_gen);
+	}
 }
-}
+
+// Main Work Loop - all work done here
 
 void CLMiner::workLoop()
 {
@@ -142,7 +143,7 @@ void CLMiner::workLoop()
 				// New work received. Update GPU data.
 				auto localSwitchStart = std::chrono::high_resolution_clock::now();
 
-				if (!w)
+				if (!w)    
 				{
 					cllog << "No work. Pause for 3 s.";
 					std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -164,6 +165,30 @@ void CLMiner::workLoop()
 					init(w.seed);
 				}
 
+				//	PROFILING
+
+				//cl_command_queue command_queue; // Already created
+				//command_queue = clCreateCommandQueue(context, devices[deviceUsed], CL_QUEUE_PROFILING_ENABLE, &err); //
+
+				//cl_event event;
+
+				//err = clEnqueueNDRangeKernel(queue, kernel, woridim, NULL, workgroupsize, NULL, 0, NULL, &event);
+
+				//clWaitForEvents(1, &event);
+
+				//clFinish(queue);
+
+				//cl_ulong time_start;
+				//cl_ulong time_end;
+
+				//clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);
+				//clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);
+
+				//double nanoSeconds = time_end-time_start;
+				//printf("OpenCl Execution time is: %0.3f milliseconds \n",total_time / 1000000.0);
+
+				// End 
+
 				// Upper 64 bits of the boundary.
 				const uint64_t target = (uint64_t)(u64)((u256)w.boundary >> 192);
 				assert(target > 0);
@@ -171,6 +196,8 @@ void CLMiner::workLoop()
 				// Update header constant buffer.
 				m_queue.enqueueWriteBuffer(m_header, CL_FALSE, 0, w.header.size, w.header.data());
 				m_queue.enqueueWriteBuffer(m_searchBuffer, CL_FALSE, 0, sizeof(c_zero), &c_zero);
+
+
 
 				m_searchKernel.setArg(0, m_searchBuffer);  // Supply output buffer to kernel.
 				m_searchKernel.setArg(4, target);
@@ -223,6 +250,9 @@ void CLMiner::workLoop()
 				// Make sure the last buffer write has finished --
 				// it reads local variable.
 				m_queue.finish();
+
+
+
 				break;
 			}
 		}
@@ -241,7 +271,7 @@ unsigned CLMiner::getNumDevices()
 	vector<cl::Platform> platforms = getPlatforms();
 	if (platforms.empty())
 		return 0;
-
+figuired
 	vector<cl::Device> devices = getDevices(platforms, s_platformId);
 	if (devices.empty())
 	{
@@ -258,6 +288,7 @@ void CLMiner::listDevices()
 
 	vector<cl::Platform> platforms = getPlatforms();
 	if (platforms.empty())
+		cwarn << "No Platforms founds. - MN";
 		return;
 	for (unsigned j = 0; j < platforms.size(); ++j)
 	{
