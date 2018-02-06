@@ -75,7 +75,7 @@ public:
 		for (auto const& m: m_miners)
 			m->setWork(m_work);
 			
-		cwarn << "work set - farm.h" << endl;
+		cout << "work set - farm.h" << endl;
 	}
 
 	void setSealers(std::map<std::string, SealerDescriptor> const& _sealers) { m_sealers = _sealers; }
