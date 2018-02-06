@@ -658,6 +658,8 @@ private:
 			f.start("cuda", false);
 		f.setWork(WorkPackage{genesis});
 
+		cout << "Work Set MinerAux.h" << endl;
+
 		map<uint64_t, WorkingProgress> results;
 		uint64_t mean = 0;
 		uint64_t innerMean = 0;

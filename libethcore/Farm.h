@@ -74,7 +74,8 @@ public:
 		m_work = _wp;
 		for (auto const& m: m_miners)
 			m->setWork(m_work);
-			cwarn << "work set - farm.h";
+			
+		cwarn << "work set - farm.h" << endl;
 	}
 
 	void setSealers(std::map<std::string, SealerDescriptor> const& _sealers) { m_sealers = _sealers; }
@@ -84,7 +85,7 @@ public:
 	 */
 	bool start(std::string const& _sealer, bool mixed)
 	{
-		cout << "start farm";
+		cout << "Start farm.h" << endl;
 		Guard l(x_minerWork);
 		if (!m_miners.empty() && m_lastSealer == _sealer)
 			return true;
@@ -131,6 +132,7 @@ public:
 			}
 		}
 
+		cout << "Farm start over farm.h" << endl;
 		return true;
 	}
 

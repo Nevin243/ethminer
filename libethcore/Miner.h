@@ -175,7 +175,6 @@ public:
 
 	void setWork(WorkPackage const& _work)
 	{
-		cout << "Work set - Miner.h";
 		{
 			Guard l(x_work);
 			m_work = _work;
@@ -184,6 +183,7 @@ public:
 		pause();
 		kickOff();
 		m_hashCount = 0;
+		cout << "Work set - Miner.h" << endl;
 	}
 
 	uint64_t hashCount() const { return m_hashCount; }
