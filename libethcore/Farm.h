@@ -223,6 +223,7 @@ public:
 	 */
 	WorkingProgress const& miningProgress(bool hwmon = false) const
 	{
+		cout << "mining progess call" << endl;
 		WorkingProgress p;
 		p.ms = 0;
 		p.hashes = 0;
