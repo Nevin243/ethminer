@@ -143,6 +143,8 @@ include(EthCompilerSettings)
 
 createBuildInfo()
 
+find_package(ZLIB CONFIG REQUIRED)
+
 add_subdirectory(libdevcore)
 add_subdirectory(libethash)
 add_subdirectory(libhwmon)
