@@ -183,7 +183,7 @@ public:
 		pause();
 		kickOff();
 		m_hashCount = 0;
-		cout << "Work set - Miner.h" << endl;
+		//cout << "Work set - Miner.h" << endl;
 	}
 
 	uint64_t hashCount() const { return m_hashCount; }
