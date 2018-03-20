@@ -6,6 +6,7 @@
 #include "CLMiner.h"
 #include <libethash/internal.h>
 #include "CLMiner_kernel.h"
+//#include a
 
 using namespace dev;
 using namespace eth;
@@ -491,18 +492,21 @@ bool CLMiner::init(const h256& seed)
 		// into a byte array by bin2h.cmake. There is no need to load the file by hand in runtime
 		// TODO: Just use C++ raw string literal.
 		string code(CLMiner_kernel, CLMiner_kernel + sizeof(CLMiner_kernel));
-		addDefinition(code, "GROUP_SIZE", m_workgroupSize);
-		addDefinition(code, "DAG_SIZE", dagSize128);
-		addDefinition(code, "LIGHT_SIZE", lightSize64);
-		addDefinition(code, "ACCESSES", ETHASH_ACCESSES);
-		addDefinition(code, "MAX_OUTPUTS", c_maxSearchResults);
-		addDefinition(code, "PLATFORM", platformId);
-		addDefinition(code, "COMPUTE", computeCapability);
-		addDefinition(code, "THREADS_PER_HASH", s_threadsPerHash);
+		// addDefinition(code, "GROUP_SIZE", m_workgroupSize);
+		// addDefinition(code, "DAG_SIZE", dagSize128);
+		// addDefinition(code, "LIGHT_SIZE", lightSize64);
+		// addDefinition(code, "ACCESSES", ETHASH_ACCESSES);
+		// addDefinition(code, "MAX_OUTPUTS", c_maxSearchResults);
+		// addDefinition(code, "PLATFORM", platformId);
+		// addDefinition(code, "COMPUTE", computeCapability);
+		// addDefinition(code, "THREADS_PER_HASH", s_threadsPerHash);
 
 		// create miner OpenCL program
 		cl::Program::Sources sources{{code.data(), code.size()}};
 		cl::Program program(m_context, sources);
+		//cl::Program::Sources bi BINARY HREER ERE
+		
+		
 		try
 		{
 			program.build({device}, options);

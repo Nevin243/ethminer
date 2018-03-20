@@ -302,7 +302,7 @@ __kernel void ethash_search(
     hash128_t mix;
     share[hash_id].uint16s[0] = ((uint16 *)state)[0];
 
-    #pragma unroll
+    //#pragma unroll
     for(uint i = 0; i < 4; i++) {
         mix.uint4s[i  ] = share[hash_id].uint4s[i];
         mix.uint4s[i+4] = share[hash_id].uint4s[i];
@@ -310,27 +310,27 @@ __kernel void ethash_search(
 
     uint init0 = share[hash_id].uints[0];
 
-    #pragma unroll
+    //#pragma unroll
     for(uint i = 0; i < ACCESSES; i++) {
         uint p = FNV(i ^ init0, mix.uints[i & 31]) % DAG_SIZE;
   
-        #pragma unroll
+        //#pragma unroll
         for(uint j = 0; j < 8; j++) 
             mix.uint4s[j] = FNV(mix.uint4s[j], g_dag[p].uint4s[j]);
     }
 
-    #pragma unroll
+    //#pragma unroll
     for(uint i = 0; i < 8; i++) {
         share[hash_id].uints[i] = FNV_REDUCE(mix.uint4s[i]);
     }
 
-    #pragma unroll
+    //#pragma unroll
     for(uint i = 0; i < 4; i++) {
         (state + 8)[i] = share[hash_id].ulongs[i];
     }
 
 #else
-    #pragma unroll 1
+    //#pragma unroll 1
     for (uint tid = 0; tid < THREADS_PER_HASH; tid++) {
         if (tid == thread_id) {
             share->uint16s[0] = ((uint16*)state)[0];
@@ -351,11 +351,11 @@ __kernel void ethash_search(
         uint init0 = share->uints[0];
         mem_fence(CLK_LOCAL_MEM_FENCE);
  
-        #pragma unroll 1
+        //#pragma unroll 1
         for (uint a = 0; a < 64; a += ACCESS_INCREMENT) {
             bool update_share = thread_id == ((a >> ACCESS_SHIFT) & (THREADS_PER_HASH - 1));
  
-            #pragma unroll
+            //#pragma unroll
             for (uint i = 0; i != ACCESS_INCREMENT; ++i) {
                 if (update_share) {
                     share->uints[0] = FNV(init0 ^ (a + i), ((uint *)&mix)[i]) % DAG_SIZE;
@@ -363,7 +363,7 @@ __kernel void ethash_search(
                 mem_fence(CLK_LOCAL_MEM_FENCE);
 
 #if THREADS_PER_HASH == 2
-                #pragma unroll
+                //#pragma unroll
                 for(uint i = 0; i < 16; i++) 
                 	((uint *)&mix)[i] = FNV(((uint *)&mix)[i], g_dag[share->uints[0]].uints[16*thread_id + i]);
 #elif THREADS_PER_HASH == 4
