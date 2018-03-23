@@ -16,7 +16,7 @@
 #endif
 
 #ifndef PLATFORM
-    #define PLATFORM OPENCL_PLATFORM_AMD
+    #define PLATFORM OPENCL_PLATFORM_UNKNOWN
 #endif
 
 #ifndef DAG_SIZE

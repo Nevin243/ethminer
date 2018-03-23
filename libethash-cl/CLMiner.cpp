@@ -6,10 +6,12 @@
 #include "CLMiner.h"
 #include <libethash/internal.h>
 #include "CLMiner_kernel.h"
-//#include a
+#include <CL/opencl.h>
+#include <AOCLUtils/aocl_utils.h>
 
 using namespace dev;
 using namespace eth;
+using namespace aocl_utils;
 
 namespace dev
 {
@@ -80,7 +82,6 @@ namespace dev
 			}
 
 		}
-
 	}
 }
 
@@ -197,8 +198,6 @@ void CLMiner::workLoop()
 				// Update header constant buffer.
 				m_queue.enqueueWriteBuffer(m_header, CL_FALSE, 0, w.header.size, w.header.data());
 				m_queue.enqueueWriteBuffer(m_searchBuffer, CL_FALSE, 0, sizeof(c_zero), &c_zero);
-
-
 
 				m_searchKernel.setArg(0, m_searchBuffer);  // Supply output buffer to kernel.
 				m_searchKernel.setArg(4, target);
@@ -501,12 +500,31 @@ bool CLMiner::init(const h256& seed)
 		// addDefinition(code, "COMPUTE", computeCapability);
 		// addDefinition(code, "THREADS_PER_HASH", s_threadsPerHash);
 
+		FILE* fp = fopen("CLMiner_kernel.aocx", "rb");
+        size_t *binary_size;
+        
+		if(fp==0) {
+            printf("Couldnt open binary file\n");
+                return NULL;
+        }
+                
+		fseek(fp, 0, SEEK_END);
+        *binary_size = ftell(fp);
+	    unsigned char *binary = new unsigned char[*size];
+        rewind(fp);
+		if(fread((void*)binary, *binary_size, 1, fp) == 0) {
+			delete[] binary;
+			fclose(fp);
+			printf("Error reading binary file\n");
+			return NULL;
+		}
+
 		// create miner OpenCL program
-		cl::Program::Sources sources{{code.data(), code.size()}};
-		cl::Program program(m_context, sources);
-		//cl::Program::Sources bi BINARY HREER ERE
-		
-		
+		//cl::Program::Sources sources{{code.data(), code.size()}};
+		//cl::Program program(m_context, sources);
+		cl::Program::Binaries binaries{{binary, *binary_size}};
+		cl::Program program(m_context, devices, binaries);
+
 		try
 		{
 			program.build({device}, options);
