@@ -126,6 +126,9 @@ find_package(jsoncpp CONFIG REQUIRED)
 hunter_add_package(libjson-rpc-cpp)
 find_package(libjson-rpc-cpp CONFIG REQUIRED)
 
+find_package(Threads)
+link_directories(/usr/lib64/)
+
 configureProject()
 
 message("------------------------------------------------------------------------")

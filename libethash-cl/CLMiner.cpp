@@ -6,12 +6,12 @@
 #include "CLMiner.h"
 #include <libethash/internal.h>
 #include "CLMiner_kernel.h"
-#include <CL/opencl.h>
-#include <AOCLUtils/aocl_utils.h>
+//#include <CL/opencl.h>
+//#include <AOCLUtils/aocl_utils.h>
 
 using namespace dev;
 using namespace eth;
-using namespace aocl_utils;
+//using namespace aocl_utils;
 
 namespace dev
 {
@@ -522,7 +522,7 @@ bool CLMiner::init(const h256& seed)
 		// create miner OpenCL program
 		//cl::Program::Sources sources{{code.data(), code.size()}};
 		//cl::Program program(m_context, sources);
-		cl::Program::Binaries binaries{{binary, *binary_size}};
+		cl::Program::Binaries binaries({binary, *binary_size});
 		cl::Program program(m_context, devices, binaries);
 
 		try
